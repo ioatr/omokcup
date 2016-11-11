@@ -4,6 +4,7 @@ import sys
 
 import core.config
 
+
 BOARD_SIZE = core.config.BOARD_SIZE
 EYE_OFFSET = 3
 
@@ -61,12 +62,20 @@ def choose(my_id, px, py, board):
     '''
 
     #
-    # 이 부분을 구현해주세요. 아래는 샘플 코드입니다.
+    # 이 부분을 구현해주세요. 
     #
-    for y in xrange(BOARD_SIZE):
-        for x in xrange(BOARD_SIZE):
-            if board[y][x] == 0:
-                return x, y    
+
+    # 샘플1
+    # for y in xrange(BOARD_SIZE):
+    #     for x in xrange(BOARD_SIZE):
+    #         if board[y][x] == 0:
+    #             return x, y
+
+    # 샘플2
+    import core.omok_vanilla_ai
+    tmp = core.omok_vanilla_ai.AI(board, my_id)
+    return tmp[0], tmp[1]    
+
 
 
 if __name__ == '__main__':
@@ -80,7 +89,7 @@ if __name__ == '__main__':
         if status == -1:
             break
 
-        # 오목을 구현하세요
+        # 자신의 수 선택
         x, y = choose(game.my_id, x, y, game.board)
 
         # sync
