@@ -4,7 +4,7 @@
 
 ## 참여방법
 ### 코드로 참여
-- omok_your_client.py (or 추가예정.cs)을 수정하여, 대회 당일까지 ~로 실행파일(or 실행코드)를 보내주세요.
+- omok_your_client.py (or omok_your_client.cs)을 수정하여, 대회 당일까지 ~로 실행코드(or 실행파일)를 보내주세요.
 - 작성 방법에 제한은 없습니다.
 
 ### 사람으로 참여
@@ -34,7 +34,18 @@
 ## 코드 관련
 ### 실행
 - [Python2.7](https://www.python.org/downloads/) 이상이 필요합니다.
-- //TODO: 으으으 작성하기 힘들다.
+- 필수 묘듈 pygame //TODO: 자세하게 작성하기
+- 실행 인자는 2개의 파이썬 코드 및 실행파일(*.exe)를 받을 수 있습니다.
+  - 생략시 기본 AI 실행
+
+```bash
+# 기본 실행
+$ python omok_host.py [omok_your_client.py [omok_your_client.py]]
+
+# 자신의 AI vs 기본 AI
+$ python omok_host.py omok_your_client.py
+$ python omok_host.py omok_your_client.exe
+```
 
 ### 구조
 - core/ 오목 핵심 코드 [저장소 링크](https://github.com/ioatr/omok)
@@ -48,4 +59,4 @@ Q. 사람은 왜 참여하나요?
 > 많은 분들이 참가해주셨으면해서... 어쩌다보니 man vs machine...
 
 Q. 윈도우 실행 버전은 없나요? 파이썬 설치하기 싫어요...
-> 만들다가 실패했습니다. 코드 기부 받습니다.
+> py2exe로 만들다가 실패했습니다. 코드 기부 받습니다.
