@@ -55,6 +55,9 @@ $ python omok_host.py omok_your_client.exe
 - omok_client.py 오목 클라이언트
 - omok_your_client.py 오목 개인 클라이언트
 
+### 실행예제
+![omok_example](https://cloud.githubusercontent.com/assets/760514/20297318/4d463e2e-ab53-11e6-8762-ab7219dc978d.gif)
+
 
 # Q&A
 Q. 사람은 왜 참여하나요?
