@@ -16,6 +16,10 @@ namespace OmokClientExample
             // px, py: 방금전 상대편이 둔 수 (주의!맨 처음 수는 - 1, -1로 주어진다)
             // board: 현재 상태 수
 
+
+            //
+            // 이 부분을 구현해주세요. 아래는 샘플 코드입니다.
+            //
             var boardSize = board.Length;
             for (var y = 0; y < boardSize; ++y)
                 for (var x = 0; y < boardSize; ++x)
