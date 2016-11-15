@@ -4,7 +4,10 @@
 
 ## 참여방법
 ### 코드로 참여
-- omok_your_client.py (or omok_your_client.cs)을 수정하여, 대회 당일까지 (추후에 공지)로 실행코드(or 실행파일)를 보내주세요.
+- omok_your_client.(py or cs)을 수정하여, 대회 당일까지 (추후에 공지)로 실행코드(or 실행파일)를 보내주세요.
+- Python, C# 유저를 위해 샘플 코드를 준비 했습니다.
+    - omok_your_client.(py or cs)의 choose 함수 부분만 수정하여 작성하는 것을 추천합니다.
+    - 편의성을 위하여 오목승패, 통신은 다 구현되어 있습니다.
 - 작성 방법에 제한은 없습니다.
 
 ### 사람으로 참여
@@ -31,10 +34,13 @@
 ### 실행
 - [Python2.7](https://www.python.org/downloads/) 이상이 필요합니다.
 - 시각화를 위한 pygame module 사용
-- 실행 인자는 2개의 파이썬 코드 및 실행파일(*.exe)를 받을 수 있습니다.
+- 실행 인자는 2개의 파이썬 코드 및 컴파일 된 실행파일(*.exe)를 받을 수 있습니다.
   - 생략시 기본 AI 실행
 
 ```bash
+# pygame 설치
+$ pip install pygame
+
 # 기본 실행
 $ python omok_host.py [omok_your_client.py [omok_your_client.py]]
 
