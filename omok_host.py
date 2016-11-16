@@ -18,8 +18,10 @@ WHITE = 2
 
 TOTAL_ROUND = 5
 
+# 흑/백간의 쉬는 시간
 SLEEP = 0.2
-TIME_OUT = 10
+# 타임아웃
+TIME_OUT = 30
 DEFAULT_CLIENT = 'omok_client.py'
 
 
