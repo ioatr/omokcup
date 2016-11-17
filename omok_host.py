@@ -31,28 +31,68 @@ class OmokException(Exception):
 		self.reason = reason
 
 
-def send_msg(proc, turn, obj):
-	try:
-		proc.stdin.write(str(obj) + '\n')
-		proc.stdin.flush()
-	except:
-		raise OmokException(turn, '')
+class PipeClient:
+	def __init__(self, args):
+		self.proc = Popen(args, shell=False, bufsize=2048, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+		return
+	
+
+	def send_msg(self, turn, obj):
+		try:
+			self.proc.stdin.write(str(obj) + '\n')
+			self.proc.stdin.flush()
+		except:
+			raise OmokException(turn, '')
 
 
-def get_msg(proc, turn):
-	if os.name == 'nt':
-		# nt is window
-		# select, window is not support
-		return proc.stdout.readline().rstrip()
-	else:
-		has_msg, _, _ = select([proc.stdout], [], [], TIME_OUT)
-		if has_msg:
-			return proc.stdout.readline().rstrip('\n')
+	def get_msg(self, turn):		
+		if os.name == 'nt':
+			# nt is window
+			# select, window is not support
+			msg =  self.proc.stdout.readline().rstrip()
+			return map(int, msg.split())
 		else:
-			proc.kill()
-			raise OmokException(turn, 'timeout')
+			has_msg, _, _ = select([self.proc.stdout], [], [], TIME_OUT)
+			if has_msg:
+				msg = self.proc.stdout.readline().rstrip('\n')
+				return map(int, msg.split())
+			else:
+				self.proc.kill()
+				raise OmokException(turn, 'timeout')
 
 
+	def quit(self):
+		if self.proc.returncode is None:
+			self.proc.stdin.write('quit\n')
+
+
+
+class ManualClient:
+	def __init__(self, game, screen):
+		self.game = game
+		self.screen = screen
+		return
+	
+
+	def send_msg(self, turn, obj):
+		return
+
+	
+	def get_msg(self, turn):
+		return self.screen.get_player_input(self.game.map, self.game.turn)
+
+
+	def quit(self):
+		return
+	
+
+
+def send_msg(client, turn, obj):
+	client.send_msg(turn, obj)
+
+
+def get_msg(client, turn):
+	return client.get_msg(turn)
 
 
 def set_color(code, text):
@@ -78,16 +118,24 @@ def _get_username(user):
 		return 'WHITE' 
 
 
+def get_client(args, game, screen):
+	print args[0]
+	if args[0] is 'manual':
+		return ManualClient(game, screen)
+	else:
+		return PipeClient(args)
+
+
 def do_game(args1, args2, turn=BLACK, screen=None):
-
-	# invoke first player
-	p1 = Popen(args1, shell=False, bufsize=2048, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-
-	# invoke another player
-	p2 = Popen(args2, shell=False, bufsize=2048, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
 	game = core.omok.Omok()
 	game.turn = turn
+
+	# invoke first player
+	p1 = get_client(args1, game, screen) 
+
+	# invoke another player
+	p2 = get_client(args2, game, screen)
 
 	x, y = -1, -1
 	players = [None, p1, p2]
@@ -95,6 +143,9 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 	# 플레이어에게 자신의 턴을 알려준다
 	send_msg(p1, BLACK, BLACK)
 	send_msg(p2, WHITE, WHITE)
+
+	# draw
+	game.draw(screen)
 
 	while True:
 		turn = game.turn
@@ -104,9 +155,8 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 		send_msg(player, turn, '{} {}'.format(x, y))
 
 		# 플레이어의 수를 가져온다
-		msg = get_msg(player, turn)
-		x, y = map(int, msg.split())
-		
+		x, y = get_msg(player, turn)
+
 		# 게임 진행
 		ret = game.step(x, y)
 
@@ -121,12 +171,9 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 		# wait
 		time.sleep(SLEEP)
 
-
 	# quit process
-	if p1.returncode is None:
-		p1.stdin.write('quit\n')
-	if p2.returncode is None:
-		p2.stdin.write('quit\n')
+	p1.quit()
+	p2.quit()
 	
 	return ret
 
@@ -191,7 +238,9 @@ if __name__ == '__main__':
 			filename = DEFAULT_CLIENT
 		
 		ext = os.path.splitext(filename)[1]
-		if ext in {'.py'}:
+		if filename in {'m', 'manual'}:
+			return ['manual']
+		elif ext in {'.py'}:
 			return ['python', filename]
 		elif ext in {'.exe'}:
 			return [filename]

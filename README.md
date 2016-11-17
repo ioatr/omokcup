@@ -42,6 +42,7 @@
 - 시각화를 위한 pygame module 사용
 - 실행 인자는 2개의 파이썬 코드 및 컴파일 된 실행파일(*.exe)를 받을 수 있습니다.
   - 생략시 기본 AI 실행
+  - 인자로 manual(or m)을 주시면 수동모드를 활성화하여 마우스로 오목을 둘 수 있습니다.
 
 ```bash
 # pygame 설치
@@ -53,6 +54,9 @@ $ python omok_host.py [omok_your_client.py [omok_your_client.py]]
 # 자신의 AI vs 기본 AI
 $ python omok_host.py omok_your_client.py
 $ python omok_host.py omok_your_client.exe
+
+# 수동 모드: 마우스로 오목을 둘 수 있습니다.
+$ python omok_host.py m[anual]
 ```
 
 ### 구조
