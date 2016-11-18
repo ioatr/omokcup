@@ -119,7 +119,6 @@ def _get_username(user):
 
 
 def get_client(args, game, screen):
-	print args[0]
 	if args[0] is 'manual':
 		return ManualClient(game, screen)
 	else:
