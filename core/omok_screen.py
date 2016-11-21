@@ -89,3 +89,8 @@ class OmokScreen:
                     if button[0] and x >= 0 and x < BOARD_SIZE and y >= 0 and y < BOARD_SIZE: 
                         if board[y][x] == 0:
                             return [x, y]
+
+                        
+    def play_sound(self, filename):
+        pygame.mixer.music.load(filename)
+        pygame.mixer.music.play(0)

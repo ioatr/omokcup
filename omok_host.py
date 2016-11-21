@@ -19,7 +19,7 @@ WHITE = 2
 TOTAL_ROUND = 5
 
 # 흑/백간의 쉬는 시간
-SLEEP = 0.2
+SLEEP = 1
 # 타임아웃
 TIME_OUT = 30
 DEFAULT_CLIENT = 'omok_client.py'
@@ -158,6 +158,7 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 
 		# 게임 진행
 		ret = game.step(x, y)
+		screen.play_sound('tock.wav')
 
 		# print log
 		game.draw(screen)
