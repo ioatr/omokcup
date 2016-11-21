@@ -158,7 +158,7 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 
 		# 게임 진행
 		ret = game.step(x, y)
-		screen.play_sound('tock.wav')
+		screen.play_sound('sound/tock.wav')
 
 		# print log
 		game.draw(screen)
@@ -197,6 +197,9 @@ def do(args1, args2):
 		try:
 			res = do_game(args1, args2, turn, screen)
 			winner = res
+
+			# sound
+			screen.play_sound('sound/win.wav')
 
 		except OmokException as e:
 			# 플레이어가 예외상황(타임아웃)이라면, 상대 플레이어 승으로 간주한다
