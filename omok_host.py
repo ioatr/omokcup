@@ -25,27 +25,45 @@ TIME_OUT = 30
 DEFAULT_CLIENT = 'omok_client.py'
 
 
+class Player():
+	index = 0
+	args = None
+	client = None
+
+	def __init__(self, index, args):
+		self.index = index
+		self.args = args
+
+
+	def getname(self):
+		if self.index == BLACK:
+			return 'Player1'
+		elif self.index == WHITE:
+			return 'Player2' 
+
+
+
 class OmokException(Exception):
-	def __init__(self, turn, reason):
-		self.turn = turn
+	def __init__(self, player, reason):
+		self.player = player
 		self.reason = reason
 
 
 class PipeClient:
-	def __init__(self, args):
-		self.proc = Popen(args, shell=False, bufsize=2048, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+	def __init__(self, player):
+		self.proc = Popen(player.args, shell=False, bufsize=2048, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		return
 	
 
-	def send_msg(self, turn, obj):
+	def send_msg(self, player, obj):
 		try:
 			self.proc.stdin.write(str(obj) + '\n')
 			self.proc.stdin.flush()
 		except:
-			raise OmokException(turn, '')
+			raise OmokException(player, '')
 
 
-	def get_msg(self, turn):		
+	def get_msg(self, player):		
 		if os.name == 'nt':
 			# nt is window
 			# select, window is not support
@@ -58,7 +76,7 @@ class PipeClient:
 				return map(int, msg.split())
 			else:
 				self.proc.kill()
-				raise OmokException(turn, 'timeout')
+				raise OmokException(player, 'timeout')
 
 
 	def quit(self):
@@ -74,11 +92,11 @@ class ManualClient:
 		return
 	
 
-	def send_msg(self, turn, obj):
+	def send_msg(self, player, obj):
 		return
 
 	
-	def get_msg(self, turn):
+	def get_msg(self, player):
 		return self.screen.get_player_input(self.game.map, self.game.turn)
 
 
@@ -87,12 +105,12 @@ class ManualClient:
 	
 
 
-def send_msg(client, turn, obj):
-	client.send_msg(turn, obj)
+def send_msg(player, obj):
+	player.client.send_msg(player, obj)
 
 
-def get_msg(client, turn):
-	return client.get_msg(turn)
+def get_msg(player):
+	return player.client.get_msg(player)
 
 
 def set_color(code, text):
@@ -111,37 +129,28 @@ def set_color(code, text):
 		return text
 
 
-def _get_username(user):
-	if user == BLACK:
-		return 'BLACK'
-	elif user == WHITE:
-		return 'WHITE' 
-
-
-def get_client(args, game, screen):
-	if args[0] is 'manual':
-		return ManualClient(game, screen)
+def set_client(player, game, screen):
+	if player.args[0] is 'manual':
+		player.client = ManualClient(game, screen)
 	else:
-		return PipeClient(args)
+		player.client = PipeClient(player)
 
 
-def do_game(args1, args2, turn=BLACK, screen=None):
+def do_game(players, turn=BLACK, screen=None):
 
 	game = core.omok.Omok()
-	game.turn = turn
+	game.turn = BLACK
 
-	# invoke first player
-	p1 = get_client(args1, game, screen) 
-
-	# invoke another player
-	p2 = get_client(args2, game, screen)
-
+	# init
 	x, y = -1, -1
-	players = [None, p1, p2]
+
+	# invoke player
+	set_client(players[BLACK], game, screen)
+	set_client(players[WHITE], game, screen)
 
 	# 플레이어에게 자신의 턴을 알려준다
-	send_msg(p1, BLACK, BLACK)
-	send_msg(p2, WHITE, WHITE)
+	send_msg(players[BLACK], BLACK)
+	send_msg(players[WHITE], WHITE)
 
 	# draw
 	game.draw(screen)
@@ -151,10 +160,10 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 		player = players[game.turn]
 
 		# 플레이어에게 전 플레이어의 수를 알려준다
-		send_msg(player, turn, '{} {}'.format(x, y))
+		send_msg(player, '{} {}'.format(x, y))
 
 		# 플레이어의 수를 가져온다
-		x, y = get_msg(player, turn)
+		x, y = get_msg(player)
 
 		# 게임 진행
 		ret = game.step(x, y)
@@ -162,7 +171,7 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 
 		# print log
 		game.draw(screen)
-		print set_color(turn, '{}({}) put {}, {}'.format(_get_username(turn), turn, x, y))
+		print set_color(turn, '{} put {}, {}'.format(player.getname(), x, y))
 		
 		# 게임 진행중 체크, -1은 진행 중
 		if ret != -1:
@@ -172,17 +181,20 @@ def do_game(args1, args2, turn=BLACK, screen=None):
 		time.sleep(SLEEP)
 
 	# quit process
-	p1.quit()
-	p2.quit()
+	players[BLACK].client.quit()
+	players[WHITE].client.quit()
 	
-	return ret
+	return players[ret]
 
 
 def do(args1, args2):
 	screen = core.omok_screen.OmokScreen()
-	turn = BLACK
 	wins = {BLACK:0, WHITE:0}
 	winner = None
+
+	p1 = Player(1, args1)
+	p2 = Player(2, args2)
+	players = None
 
 	# print vs
 	print set_color('g', '{} vs {}'.format('-'.join(args1), '-'.join(args2)))
@@ -195,7 +207,18 @@ def do(args1, args2):
 		time.sleep(1)
 
 		try:
-			res = do_game(args1, args2, turn, screen)
+			# 라운드 마다 순서 교체
+			if _round % 2 == 0:
+				players = [None, p1, p2]
+			else:
+				players = [None, p2, p1]
+
+			# print first player
+			print set_color('g', '{} is First'.format(players[BLACK].getname()))
+			time.sleep(1)
+
+			# do omok
+			res = do_game(players, BLACK, screen)
 			winner = res
 
 			# sound
@@ -203,8 +226,8 @@ def do(args1, args2):
 
 		except OmokException as e:
 			# 플레이어가 예외상황(타임아웃)이라면, 상대 플레이어 승으로 간주한다
-			winner = EYE_OFFSET - e.turn
-			print set_color('r', '{} IS TIMEOUT'.format(_get_username(e.turn)))
+			winner = players[EYE_OFFSET - e.index]
+			print set_color('r', '{} IS TIMEOUT'.format(e.getname()))
 
 		except:
 			import traceback
@@ -212,18 +235,17 @@ def do(args1, args2):
 			sys.exit("Fatal Error")
 
 		# 승리자
-		wins[winner] += 1
-		turn = EYE_OFFSET - turn
+		wins[winner.index] += 1
 
-		print set_color('g', 'WINNER IS {}'.format(_get_username(winner)))
+		print set_color('g', 'WINNER IS {}'.format(winner.getname()))
 		print ''
 
 		time.sleep(3)
 
 	# 결과 출력
 	who_win = max(enumerate(wins), key=lambda x: x[1])[0]
-	print set_color('g', 'Black {} : White {}'.format(wins[BLACK], wins[WHITE]))
-	print set_color('g', 'Finnaly Winner is {}'.format(_get_username(who_win)))
+	print set_color('g', 'Player1 {} : Player2 {}'.format(wins[1], wins[2]))
+	print set_color('g', 'Finnaly Winner is {}'.format(players[who_win].getname()))
 
 
 
