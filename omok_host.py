@@ -226,7 +226,7 @@ def do(args1, args2):
 
 		except OmokException as e:
 			# 플레이어가 예외상황(타임아웃)이라면, 상대 플레이어 승으로 간주한다
-			winner = players[EYE_OFFSET - e.player.index]
+			winner = e.player.index == 1 and p2 or p1
 			print set_color('r', '{} IS TIMEOUT'.format(e.player.getname()))
 
 		except:
