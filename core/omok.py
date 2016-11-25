@@ -39,7 +39,7 @@ class Omok:
         while (x < BOARD_SIZE) and (self.map[y][x] == Type):
             count+=1
             x+=1
-        if (count == 5):
+        if (count >= 5):
             return True
 
         x, y = nX, nY
@@ -49,7 +49,7 @@ class Omok:
         while (y < BOARD_SIZE) and (self.map[y][x] == Type):
             count+=1
             y+=1
-        if (count == 5):
+        if (count >= 5):
             return True
         
         x = nX
@@ -63,7 +63,7 @@ class Omok:
             count+=1
             x+=1
             y+=1
-        if (count == 5):
+        if (count >= 5):
             return True
 
         x = nX
@@ -76,7 +76,7 @@ class Omok:
             count+=1
             x-=1
             y+=1
-        if (count == 5):
+        if (count >= 5):
             return True
 
         return False
