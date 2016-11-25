@@ -10,18 +10,19 @@ import util
 import core.config
 import core.omok
 import core.omok_screen
+import config
 
 BOARD_SIZE = core.config.BOARD_SIZE
 EYE_OFFSET = 3
 BLACK = 1
 WHITE = 2
 
-TOTAL_ROUND = 5
+TOTAL_ROUND = config.TOTAL_ROUND
 
 # 흑/백간의 쉬는 시간
-SLEEP = 1
+SLEEP = config.SLEEP
 # 타임아웃
-TIME_OUT = 30
+TIME_OUT = config.TIME_OUT
 DEFAULT_CLIENT = 'omok_client.py'
 
 
