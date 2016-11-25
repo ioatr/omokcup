@@ -44,8 +44,8 @@ class OmokNode(Node):
                     xe, ye = x, y
 
                     # record
-                    if xs-dx >= 0 and xs-dx < BOARD_SIZE and ys-dy >= 0 and ys-dy < BOARD_SIZE: mark[ys-dy][xs-dx] += count * count
-                    if x >= 0 and x < BOARD_SIZE and y >= 0 and y < BOARD_SIZE: mark[y][x] += count * count
+                    if xs-dx >= 0 and xs-dx < BOARD_SIZE and ys-dy >= 0 and ys-dy < BOARD_SIZE: mark[ys-dy][xs-dx] += count ** 3
+                    if x >= 0 and x < BOARD_SIZE and y >= 0 and y < BOARD_SIZE: mark[y][x] += count ** 3
                 else:
                     count += 1
                     x += dx
@@ -53,8 +53,8 @@ class OmokNode(Node):
             
             if begin:
                 # record
-                if xs-dx >= 0 and xs-dx < BOARD_SIZE and ys-dy >= 0 and ys-dy < BOARD_SIZE: mark[ys-dy][xs-dx] += count * count
-                if x >= 0 and x < BOARD_SIZE and y >= 0 and y < BOARD_SIZE: mark[y][x] += count * count
+                if xs-dx >= 0 and xs-dx < BOARD_SIZE and ys-dy >= 0 and ys-dy < BOARD_SIZE: mark[ys-dy][xs-dx] += count ** 3
+                if x >= 0 and x < BOARD_SIZE and y >= 0 and y < BOARD_SIZE: mark[y][x] += count ** 3
         
 
         for i in xrange(BOARD_SIZE):
