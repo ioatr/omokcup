@@ -35,11 +35,12 @@ class Player():
 		self.args = args
 
 
-	def getname(self):
-		if self.index == BLACK:
-			return 'Player1'
-		elif self.index == WHITE:
-			return 'Player2' 
+	def getname(self, detail=False):
+		name = self.index == BLACK and 'Player1' or 'Player2'
+		if detail:
+			return '{}({})'.format(name, '-'.join(self.args)) 
+		else:
+			return name
 
 
 
@@ -214,7 +215,7 @@ def do(args1, args2):
 				players = [None, p2, p1]
 
 			# print first player
-			print set_color('g', '{} is First'.format(players[BLACK].getname()))
+			print set_color('g', '{} is First'.format(players[BLACK].getname(detail=True)))
 			time.sleep(1)
 
 			# do omok
@@ -237,7 +238,7 @@ def do(args1, args2):
 		# 승리자
 		wins[winner.index] += 1
 
-		print set_color('g', 'WINNER IS {}'.format(winner.getname()))
+		print set_color('g', 'WINNER IS {}'.format(winner.getname(detail=True)))
 		print ''
 
 		time.sleep(3)
