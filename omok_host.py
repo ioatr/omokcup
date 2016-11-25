@@ -217,6 +217,7 @@ def do(args1, args2):
 
 			# print first player
 			print set_color('g', '{} is First'.format(players[BLACK].getname(detail=True)))
+			print set_color('g', '{} is Second'.format(players[WHITE].getname(detail=True)))
 			time.sleep(1)
 
 			# do omok
