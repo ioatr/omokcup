@@ -7,8 +7,8 @@ import omok_client
 BOARD_SIZE = core.config.BOARD_SIZE
 EYE_OFFSET = 3
 MY_ID = 0
-DEPTH = 16
-RATIO = 0.4
+DEPTH = 8
+RATIO = 0.5
 
 
 class Node(object):
@@ -117,7 +117,7 @@ class OmokNode(Node):
 
 
     def getchild(self, depth=0):
-        mark = self.getmark2()
+        mark = self.getmark0()
 
         tmp = []
         for y in xrange(BOARD_SIZE):
